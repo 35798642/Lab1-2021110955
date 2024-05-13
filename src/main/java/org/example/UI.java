@@ -157,7 +157,6 @@ public class UI extends JFrame {
         setVisible(true);
     }
 
-    // ... 其他方法，如processTextFile, showDirectedGraph, queryBridgeWords等
 
 
     // 以下是一些占位方法，用于演示按钮的功能

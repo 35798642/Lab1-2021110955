@@ -22,46 +22,7 @@ import java.util.regex.Pattern;
 public class GraphVisualizer {
     /*get new line*/static String newLine=System.getProperty("line.separator");    //获得当前系统的换行符
     static String osName=System.getProperty("os.name");
-    public static void visualizeGraph(Map<String, Map<String, Integer>> graph, String outputFilePath) throws IOException {
-//        MutableGraph g = Factory.mutGraph().setDirected(true); // 创建一个有向图
-//        //MutableGraph g = Factory.mutGraph("example1").setDirected(true).add(
-//        //        Factory.mutNode("a").add(Color.RED).addLink(Factory.mutNode("b")));
-//
-//        // 遍历图并添加节点和边
-//        for (Map.Entry<String, Map<String, Integer>> entry : graph.entrySet()) {
-//            String sourceWord = entry.getKey();
-//            Map<String, Integer> edges = entry.getValue();
-//            for (Map.Entry<String, Integer> edge : edges.entrySet()) {
-//                String targetWord = edge.getKey();
-//                int weight = edge.getValue();
-//                // 添加节点
-////                g.add(Factory.node(sourceWord));
-////                g.add(Factory.node(targetWord));
-//                // 添加带有权重的边
-//                g.add(Factory.mutNode("sourceWord").addLink(Factory.mutNode("targetWord")));
-//                LinkAttr.weight(weight);
-        // Create nodes
-        Node node1 = Factory.node("A");
-        Node node2 = Factory.node("B");
-        Node node3 = Factory.node("C");
-        //Link link = node1.linkTo(node2).add(Label.of("weight:1"));
-        LinkSource link = node1.link(node2);
-
-        MutableGraph g = Factory.mutGraph("exampleGraph").setDirected(true)
-                .add(
-                        node1,
-                        node2,
-                        node3,
-                        node1.link(node2)
-                        // Add weighted edges with label
-                );
-
-        // Render the graph
-        Graphviz.fromGraph(g)
-                .width(200)
-                .render(Format.PNG)
-                .toFile(new File("exampleGraph.png"));
-    }
+    
 
     public static void showDirectedGraph(Map<String, Map<String, Integer>> graph) {
         StringBuilder dotText = new StringBuilder();
