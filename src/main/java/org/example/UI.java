@@ -188,68 +188,12 @@ public class UI extends JFrame {
             } else {
                 newText.append(word1).append(" ");
             }
-//            newText.append(word1).append(" ");
         }
 
         newText.append(words[words.length - 1]); // Append the last word
 
         return newText.toString();
     }
-
-//    private String calcShortestPath(String word1, String word2) {
-//        if (!graph.containsKey(word1) || !graph.containsKey(word2)) {
-//            return "No \"" +word1 + "\" to \"" + word2 + "\" in the graph!";
-//        }
-//
-//        // 初始化距离矩阵
-//        Map<String, Map<String, Integer>> distance = new HashMap<>();
-//        for (String word : graph.keySet()) {
-//            distance.put(word, new HashMap<>());
-//            for (String neighbor : graph.keySet()) {
-//                if (word.equals(neighbor)) {
-//                    distance.get(word).put(neighbor, 0); // 到自身的距离为0
-//                } else if (graph.get(word).containsKey(neighbor)) {
-//                    distance.get(word).put(neighbor, 1); // 如果有直接边，则距离为1
-//                } else {
-//                    distance.get(word).put(neighbor, Integer.MAX_VALUE / 2); // 初始化为无穷大
-//                }
-//            }
-//        }
-//
-//        // 使用Floyd算法更新距离矩阵
-//        for (String k : graph.keySet()) {
-//            for (String i : graph.keySet()) {
-//                for (String j : graph.keySet()) {
-//                    if (distance.get(i).get(j) > distance.get(i).get(k) + distance.get(k).get(j)) {
-//                        distance.get(i).put(j, distance.get(i).get(k) + distance.get(k).get(j));
-//                    }
-//                }
-//            }
-//        }
-//
-//        // 检查是否存在路径
-//        if (distance.get(word1).get(word2) == Integer.MAX_VALUE / 2) {
-//            return "No path from \"" + word1 + "\" to \"" + word2 + "\"!";
-//        }
-//
-//        // 从距离矩阵中获取最短路径
-//        List<String> path = new ArrayList<>();
-//        path.add(word1);
-//        String current = word1;
-//        while (!current.equals(word2)) {
-//            for (String neighbor : graph.get(current).keySet()) {
-//                if (distance.get(current).get(neighbor) + graph.get(current).get(neighbor) == distance.get(current).get(word2)) {
-//                    path.add(neighbor);
-//                    current = neighbor;
-//                    break;
-//                }
-//            }
-//        }
-//
-//        // 返回最短路径和长度
-//        return "The shortest path from \"" + word1 + "\" to \"" + word2 + "\" is: " + String.join(" -> ", path) +
-//                "\nThe length of the path is: " + distance.get(word1).get(word2);
-//    }
 
 
     private String calcShortestPath(String word1, String word2) {
