@@ -267,10 +267,6 @@ public class UI extends JFrame {
             // Mark the edge as visited and move to the next node
             visitedEdges.add(edge);
             currentNode = nextNode;
-
-            // Allow the user to stop the walk if they want
-            // You can add a check here to see if the user has requested to stop the walk
-            // For example, you might have a volatile boolean flag that is checked here
         }
 
         // Write the walk to a file
