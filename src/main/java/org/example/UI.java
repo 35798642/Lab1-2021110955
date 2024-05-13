@@ -1,13 +1,30 @@
 package org.example;
 
+//import com.hit.java.GraphVisualizer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.CountDownLatch;
 
+
+import static org.example.GraphVisualizer.showDirectedGraph;
 
 public class UI extends JFrame {
     private Map<String, Map<String, Integer>> graph;
@@ -16,6 +33,7 @@ public class UI extends JFrame {
     private JTextField word1Field;
     private JTextField word2Field;
     private JTextField newTextField;
+    private AtomicBoolean stopRequested = new AtomicBoolean(false);
 
     private  boolean flag = true;
     public UI() {
@@ -32,7 +50,7 @@ public class UI extends JFrame {
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
                     processTextFile(file.getAbsolutePath());
-                    GraphVisualizer.showDirectedGraph(graph);
+                    showDirectedGraph(graph);
 
                 }
             }
@@ -101,12 +119,25 @@ public class UI extends JFrame {
             }
         });
 
-        JButton randomWalkButton = new JButton("Random Walk");
+        JButton randomWalkButton = new JButton("Start Random Walk");
         randomWalkButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+//                isPaused = false;
+//                synchronized (randomWalkButton) {
+//                    randomWalkButton.notifyAll();
+//                }
+                stopRequested.set(false);
                 String result = randomWalk();
-                textArea.append(result + "\n");
+               textArea.append(result);
+            }
+        });
+
+        JButton StoprandomWalkButton = new JButton("Pause Random Walk");
+        StoprandomWalkButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                stopRequested.set(true);
             }
         });
 
@@ -125,10 +156,12 @@ public class UI extends JFrame {
         // 将按钮添加到buttonPanel中
         gbc.gridx = 0; // 设置组件的起始列
         gbc.gridy = 0; // 设置组件的起始行
-        gbc.gridx = 2;
+        gbc.gridx = 1;
         buttonPanel.add(loadButton, gbc);
         gbc.gridx++;
         buttonPanel.add(randomWalkButton, gbc);
+        gbc.gridx++;
+        buttonPanel.add(StoprandomWalkButton, gbc);
         gbc.gridy++;
         gbc.gridx = 0; // 将列索引增加1，以便按钮在同一行
         buttonPanel.add(word1Field, gbc);
@@ -141,17 +174,16 @@ public class UI extends JFrame {
         gbc.gridy++; // 将行索引增加1，以便按钮在新行开始
         gbc.gridx = 0;
         buttonPanel.add(newTextField, gbc);
-        gbc.gridx = 2; // 将行索引增加1，以便按钮在新行开始
+        gbc.gridx = 3; // 将行索引增加1，以便按钮在新行开始
         buttonPanel.add(generateButton, gbc);
 
         setLayout(new BorderLayout());
         add(new JScrollPane(textArea), BorderLayout.CENTER);
 
-        // 将buttonPanel添加到BorderLayout的CENTER位置
         add(buttonPanel, BorderLayout.SOUTH);
 
         setTitle("Text Graph Processor");
-        setSize(600, 400);
+        setSize(850, 500);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
@@ -195,6 +227,7 @@ public class UI extends JFrame {
     }
 
 
+
     private String calcShortestPath(String word1, String word2) {
         if (graph.containsKey(word1) && graph.containsKey(word2)) {
             List<String> paths = calshortestpaths.calcShortestPath(graph, word1, word2);
@@ -230,58 +263,158 @@ public class UI extends JFrame {
     }
 
 
+
+
     private String randomWalk() {
-        // Choose a random starting node
-        List<String> nodes = new ArrayList<>(graph.keySet());
-        Collections.shuffle(nodes);
-        String currentNode = nodes.get(0);
 
-        // Initialize the walk
-        List<String> walk = new ArrayList<>();
-        Set<String> visitedEdges = new HashSet<>();
-        Random random = new Random();
 
-        // Perform the random walk
-        while (true) {
-            walk.add(currentNode);
+        Thread thread =  new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // Choose a random starting node
+                List<String> nodes = new ArrayList<>(graph.keySet());
+                Collections.shuffle(nodes);
+                String currentNode = nodes.get(0);
 
-            // Get the outgoing edges from the current node
-            Map<String, Integer> outgoingEdges = graph.get(currentNode);
-            if (outgoingEdges.isEmpty()) {
-                break; // No outgoing edges, end the walk
+                // Initialize the walk
+                List<String> walk = new ArrayList<>();
+                Set<String> visitedEdges = new HashSet<>();
+                Random random = new Random();
+                textArea.append(currentNode);
+                // Perform the random walk
+                while (!stopRequested.get()) {
+                    // Delay for 1 second after each node visit
+                    try {
+                        Thread.sleep(1000); // Delay for 1 second
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        SwingUtilities.invokeLater(() -> textArea.append("Random walk interrupted."));
+                    }
+                    walk.add(currentNode);
+                    // Get the outgoing edges from the current node
+                    Map<String, Integer> outgoingEdges = graph.get(currentNode);
+                    if (outgoingEdges.isEmpty() || stopRequested.get()) {
+                        break; // No outgoing edges, end the walk
+                    }
+
+                    // Choose a random edge
+                    List<String> edges = new ArrayList<>(outgoingEdges.keySet());
+                    Collections.shuffle(edges);
+                    String nextNode = edges.get(0);
+                    SwingUtilities.invokeLater(() -> textArea.append(" -> " + nextNode));
+                    // Check if the edge has been visited before
+                    String edge = currentNode + " -> " + nextNode;
+
+
+                    // Append a newline to the text area and update the UI
+
+
+                    if (visitedEdges.contains(edge)) {
+                        walk.add(nextNode);
+                        break; // Repeated edge, end the walk
+                    }
+
+                    // Mark the edge as visited and move to the next node
+                    visitedEdges.add(edge);
+                    currentNode = nextNode;
+
+
+                    // Allow the user to stop the walk if they want
+                    // You can add a check here to see if the user has requested to stop the walk
+                    // For example, you might have a volatile boolean flag that is checked here
+
+
+
+
+                }
+
+                String walkText = String.join(" ", walk);
+                try {
+                    writeWalkToFile(walkText);
+                } catch (IOException e) {
+                    SwingUtilities.invokeLater(() -> textArea.append("Error writing walk to file: " + e.getMessage()));
+
+                }
+
+                SwingUtilities.invokeLater(() -> textArea.append("\nRandom walk result written to file.\n"));
+
+
+
             }
+        });
+        thread.start();
 
-            // Choose a random edge
-            List<String> edges = new ArrayList<>(outgoingEdges.keySet());
-            Collections.shuffle(edges);
-            String nextNode = edges.get(0);
 
-            // Check if the edge has been visited before
-            String edge = currentNode + " -> " + nextNode;
-            if (visitedEdges.contains(edge)) {
-                walk.add(nextNode);
-                break; // Repeated edge, end the walk
-            }
+        return "Random walk is done!\n"; // 返回结果
 
-            // Mark the edge as visited and move to the next node
-            visitedEdges.add(edge);
-            currentNode = nextNode;
 
-            // Allow the user to stop the walk if they want
-            // You can add a check here to see if the user has requested to stop the walk
-            // For example, you might have a volatile boolean flag that is checked here
-        }
 
-        // Write the walk to a file
-        String walkText = String.join(" ", walk);
-        try {
-            writeWalkToFile(walkText);
-        } catch (IOException e) {
-            return "Error writing walk to file: " + e.getMessage();
-        }
 
-        return "Random walk result written to file.";
+//
+//        // Initialize the walk
+//        List<String> walk = new ArrayList<>();
+//        Set<String> visitedEdges = new HashSet<>();
+//        Random random = new Random();
+//        textArea.append(currentNode);
+//        // Perform the random walk
+//        while (!stopRequested.get()) {
+//            walk.add(currentNode);
+//            // Get the outgoing edges from the current node
+//            Map<String, Integer> outgoingEdges = graph.get(currentNode);
+//            if (outgoingEdges.isEmpty() || stopRequested.get()) {
+//                break; // No outgoing edges, end the walk
+//            }
+//
+//            // Choose a random edge
+//            List<String> edges = new ArrayList<>(outgoingEdges.keySet());
+//            Collections.shuffle(edges);
+//            String nextNode = edges.get(0);
+//            SwingUtilities.invokeLater(() -> textArea.append(" -> " + nextNode));
+//            // Check if the edge has been visited before
+//            String edge = currentNode + " -> " + nextNode;
+//
+//            // Delay for 1 second after each node visit
+//            try {
+//                Thread.sleep(1000); // Delay for 1 second
+//            } catch (InterruptedException e) {
+//                Thread.currentThread().interrupt();
+//                return "Random walk interrupted.";
+//            }
+//            // Append a newline to the text area and update the UI
+//
+//
+//            if (visitedEdges.contains(edge) || stopRequested.get()) {
+//                walk.add(nextNode);
+//                break; // Repeated edge, end the walk
+//            }
+//
+//            // Mark the edge as visited and move to the next node
+//            visitedEdges.add(edge);
+//            currentNode = nextNode;
+//
+//
+//            // Allow the user to stop the walk if they want
+//            // You can add a check here to see if the user has requested to stop the walk
+//            // For example, you might have a volatile boolean flag that is checked here
+//        }
+//        textArea.append("\n");
+//
+//        // Write the walk to a file
+//        String walkText = String.join(" ", walk);
+//        try {
+//            writeWalkToFile(walkText);
+//        } catch (IOException e) {
+//            return "Error writing walk to file: " + e.getMessage();
+//        }
+//
+//        return "Random walk result written to file.";
     }
+
+
+
+
+
+
 
     private void writeWalkToFile(String walkText) throws IOException {
         String fileName = "random_walk_result.txt";

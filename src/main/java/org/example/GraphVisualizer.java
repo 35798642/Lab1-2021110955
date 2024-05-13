@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 public class GraphVisualizer {
     /*get new line*/static String newLine=System.getProperty("line.separator");    //获得当前系统的换行符
     static String osName=System.getProperty("os.name");
-    
 
     public static void showDirectedGraph(Map<String, Map<String, Integer>> graph) {
         StringBuilder dotText = new StringBuilder();
@@ -74,7 +73,7 @@ public class GraphVisualizer {
             throw new RuntimeException("Failed to open file");
         }
         saveandshow("graph.gv",0,"all");
-        //generateImageForWindows(graphFilePath);
+
     }
 
     private static void saveandshow(String dotFile,int label,String word) {
@@ -85,7 +84,6 @@ public class GraphVisualizer {
         else{
             outputFile = "shortestpath" + word + label + ".png";
         }
-       // String graphvizPath ="C:\\Users\\25650\\Desktop\\windows_10_cmake_Release_Graphviz-11.0.0-win64\\Graphviz-11.0.0-win64\\bin\\dot.exe";
         String graphvizPath ="D:\\Program Files\\windows_10_cmake_Release_Graphviz-11.0.0-win64\\Graphviz-11.0.0-win64\\bin\\dot.exe";
         try {
             // 调用Graphviz
@@ -182,11 +180,7 @@ public class GraphVisualizer {
 
             // 检查当前节点是否是路径的起点或终点
             for (String node : pathSet) {
-//                if (line.trim().startsWith(node + ";")) {
-//                    // 如果是起点或终点，则标记为黄色
-//                    line = line.replaceFirst("(\\[.*\\])", "[color=yellow, $1");
-//                    break;
-//                }
+
                     // 确保node以;结尾
                     String nodeWithSemicolon = node + ";";
                     if (line.trim().equals(nodeWithSemicolon)) {
