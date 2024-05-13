@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 public class GraphVisualizer {
     /*get new line*/static String newLine=System.getProperty("line.separator");    //获得当前系统的换行符
     static String osName=System.getProperty("os.name");
-
     public static void showDirectedGraph(Map<String, Map<String, Integer>> graph) {
         StringBuilder dotText = new StringBuilder();
         dotText.append(String.format("digraph G{"+newLine));

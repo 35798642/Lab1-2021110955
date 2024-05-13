@@ -350,10 +350,7 @@ public class UI extends JFrame {
 
 
 
-
-
-
-
+        
 //
 //        // Initialize the walk
 //        List<String> walk = new ArrayList<>();
