@@ -73,7 +73,7 @@ public class GraphVisualizer {
             throw new RuntimeException("Failed to open file");
         }
         saveandshow("graph.gv",0,"all");
-        //generateImageForWindows(graphFilePath);
+
     }
 
     private static void saveandshow(String dotFile,int label,String word) {
