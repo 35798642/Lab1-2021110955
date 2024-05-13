@@ -1,0 +1,8 @@
+digraph G{
+explore;
+to;
+seek;
+explore->to[label=1];
+to->explore[label=1];
+to->seek[label=1];
+}
