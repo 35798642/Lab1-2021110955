@@ -1,11 +1,15 @@
 package org.example;
 
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import javax.swing.*;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserInterfaceTest {
