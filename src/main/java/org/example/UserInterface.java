@@ -1,7 +1,9 @@
 package org.example;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -13,9 +15,24 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 
 /**
@@ -367,14 +384,8 @@ public class UserInterface extends JFrame {
         List<String> wordList = Arrays.asList(words); // 转换数组为列表
         GraphVisualizer.showshortest(wordList, i, tmp); // 调用时传递列表参数
         StringBuilder pathBuilder = new StringBuilder();
-        boolean isFirst = true;
         for (String word : words) {
-          if (!isFirst) {
-            pathBuilder.append(" -> ");
-          } else {
-            isFirst = false;
-          }
-          pathBuilder.append(word);
+          pathBuilder.append(" -> ").append(word);
         }
         String path = pathBuilder.toString();
         String shortestPathLength = String.valueOf(words.length - 1);
